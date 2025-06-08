@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require_relative "lib/rcee/isolated/version"
+require_relative "lib/rcee/fuzzy_match/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "rcee_isolated"
-  spec.version       = RCEE::Isolated::VERSION
-  spec.authors       = ["Mike Dalessio"]
-  spec.email         = ["mike.dalessio@gmail.com"]
+  spec.name          = "fuzzy_match"
+  spec.version       = RCEE::FuzzyMatch::VERSION
+  spec.authors       = ["Dave Goddard"]
+  spec.email         = ["dave@goddard.au"]
 
-  spec.summary       = "Example gem demonstrating a basic C extension."
-  spec.description   = "Part of a project to explain how Ruby C extensions work."
-  spec.homepage      = "https://github.com/flavorjones/ruby-c-extensions-explained"
-  spec.required_ruby_version = ">= 2.4.0"
+  spec.summary       = "Gem to use FTS for fuzzy matching."
+  spec.description   = "Gem to use FTS for fuzzy matching."
+  spec.homepage      = "https://github.com/dgodd/fuzzy_match_gem"
+  spec.required_ruby_version = ">= 3.4.0"
   spec.license = "MIT"
 
   # Specify which files should be added to the gem when it is released.
@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.extensions    = ["ext/isolated/extconf.rb"]
+  spec.extensions    = ["ext/fuzzy_match/extconf.rb"]
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"

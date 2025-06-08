@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rcee_isolated (0.6.0)
+    fuzzy_match (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -16,10 +16,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  fuzzy_match!
   minitest (~> 5.0)
   rake (~> 13.0)
   rake-compiler
-  rcee_isolated!
 
 BUNDLED WITH
    2.6.8

@@ -6,22 +6,28 @@ VALUE rb_mFuzzyMatch;
 VALUE rb_cFuzzyMatchExtension;
 
 static VALUE
-rb_fuzzy_match_extension_class_do_something(VALUE self)
+rb_fuzzy_match_extension_class_fuzzy_match(VALUE self, VALUE pattern, VALUE str)
 {
-  /* todo: perform CPU-intensive operation */
-  int outScore;
-  bool matched = fts_fuzzy_match_simple("got", "game of thrones", &outScore);
-  printf("Matched: %d\n", matched);
-  printf("Score: %d\n", outScore);
+  char* patternPtr;
+  patternPtr = StringValueCStr(pattern);
+  char* strPtr;
+  strPtr = StringValueCStr(str);
 
-  return rb_str_new_cstr("something has been done");
+  int outScore;
+  int matched = fts_fuzzy_match_simple(patternPtr, strPtr, &outScore);
+  // return rb_sprintf("Matched: %d\nScore: %d\n", matched, outScore);
+  if (matched) {
+      return INT2FIX(outScore);
+  } else {
+      return Qfalse;
+  }
 }
 
 void
 Init_fuzzy_match(void)
 {
-  rb_mFuzzyMatch = rb_define_module("FuzzyMatch");
-  rb_cFuzzyMatchExtension = rb_define_class_under(rb_mFuzzyMatch, "Extension", rb_cObject);
-  rb_define_singleton_method(rb_cFuzzyMatchExtension, "do_something",
-                             rb_fuzzy_match_extension_class_do_something, 0);
+    rb_mFuzzyMatch = rb_define_module("FuzzyMatch");
+    rb_cFuzzyMatchExtension = rb_define_class_under(rb_mFuzzyMatch, "Extension", rb_cObject);
+    rb_define_singleton_method(rb_cFuzzyMatchExtension, "fuzzy_match",
+        rb_fuzzy_match_extension_class_fuzzy_match, 2);
 }

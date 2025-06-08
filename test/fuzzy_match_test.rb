@@ -8,10 +8,14 @@ class FuzzyMatchTest < Minitest::Spec
       assert(defined?(::FuzzyMatch::Extension))
     end
 
-    it "defines a method" do
-      result = ::FuzzyMatch::Extension.do_something
-      puts "\ndo_something returned #{result.inspect}"
-      assert(result)
+    it "returns a score" do
+      result = ::FuzzyMatch.fuzzy_match("got", "game of thrones")
+      assert_equal(result, 163)
+    end
+
+    it "returns false when no match is found" do
+      result = ::FuzzyMatch.fuzzy_match("tog", "game of thrones")
+      assert_equal(result, false)
     end
   end
 end

@@ -1,6 +1,6 @@
-# RCEE::FuzzyMatch
+# FuzzyMatch
 
-This gem is part of the Ruby C Extensions Explained project at https://github.com/flavorjones/ruby-c-extensions-explained
+This gem used the Ruby C Extensions Explained project at https://github.com/flavorjones/ruby-c-extensions-explained
 
 ## Summary
 
@@ -23,8 +23,7 @@ rb_fuzzy_match_extension_class_do_something(VALUE self)
 void
 Init_fuzzy_match(void)
 {
-  rb_mRCEE = rb_define_module("RCEE");
-  rb_mFuzzyMatch = rb_define_module_under(rb_mRCEE, "FuzzyMatch");
+  rb_mFuzzyMatch = rb_define_module("FuzzyMatch");
   rb_cFuzzyMatchExtension = rb_define_class_under(rb_mFuzzyMatch, "Extension", rb_cObject);
   rb_define_singleton_method(rb_cFuzzyMatchExtension, "do_something",
                              rb_fuzzy_match_extension_class_do_something, 0);
@@ -36,7 +35,7 @@ The `extconf.rb` is as simple as it gets:
 ``` ruby
 require "mkmf"
 
-create_makefile("rcee/fuzzy_match/fuzzy_match")
+create_makefile("fuzzy_match/fuzzy_match")
 ```
 
 "mkmf" is short for MakeMakefile, a Ruby module that's shipped with the standard library. It defines "create_makefile" as well as a handful of other methods for advanced configuration, some of which we'll see in later examples.
@@ -55,7 +54,7 @@ gcc -c -I/path/to/ruby/include fuzzy_match.c -o fuzzy_match.o
 gcc -shared -L/path/to/ruby/lib -lruby -lc -lm fuzzy_match.o -o fuzzy_match.so
 ```
 
-That final shared library, `fuzzy_match.so`, is loaded like any other Ruby file, via `require` in `lib/rcee/fuzzy_match.rb`:
+That final shared library, `fuzzy_match.so`, is loaded like any other Ruby file, via `require` in `lib/fuzzy_match.rb`:
 
 ``` ruby
 require_relative "fuzzy_match/fuzzy_match"

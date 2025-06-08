@@ -15,7 +15,7 @@ Rake::TestTask.new(:test) do |t|
 end
 
 Rake::ExtensionTask.new("fuzzy_match") do |ext|
-  ext.lib_dir = "lib/rcee/fuzzy_match"
+  ext.lib_dir = "lib/fuzzy_match"
 end
 
 task default: [:clobber, :compile, :test]

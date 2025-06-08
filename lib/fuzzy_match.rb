@@ -3,9 +3,7 @@
 require_relative "fuzzy_match/version"
 require_relative "fuzzy_match/fuzzy_match"
 
-module RCEE
-  module FuzzyMatch
-    class Error < StandardError; end
-    # Your code goes here...
-  end
+module FuzzyMatch
+  class Error < StandardError; end
+  # Your code goes here...
 end

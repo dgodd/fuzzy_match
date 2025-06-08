@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/rcee/fuzzy_match/version"
+require_relative "lib/fuzzy_match/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "fuzzy_match"
-  spec.version       = RCEE::FuzzyMatch::VERSION
+  spec.version       = FuzzyMatch::VERSION
   spec.authors       = ["Dave Goddard"]
   spec.email         = ["dave@goddard.au"]
 

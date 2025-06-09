@@ -43,7 +43,7 @@ int comp(const void *a, const void *b) {
 }
 
 static VALUE
-rb_fuzzy_match_extension_class_sort(VALUE self, VALUE pattern, VALUE strings)
+rb_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strings, VALUE n)
 {
   char* patternPtr;
   patternPtr = StringValueCStr(pattern);
@@ -59,8 +59,11 @@ rb_fuzzy_match_extension_class_sort(VALUE self, VALUE pattern, VALUE strings)
 
   qsort(scores, stringsLen, sizeof(struct StringScore), comp);
 
-  VALUE result = rb_ary_new_capa(stringsLen);
-  for (long i=0; i<stringsLen; i++) {
+  int n2 = NUM2INT(n);
+  if (n2 > stringsLen) n2 = stringsLen;
+
+  VALUE result = rb_ary_new_capa(n2);
+  for (long i=0; i<n2; i++) {
     rb_ary_push(result, scores[i].str);
   }
 
@@ -74,6 +77,6 @@ Init_fuzzy_match(void)
     rb_cFuzzyMatchExtension = rb_define_class_under(rb_mFuzzyMatch, "Extension", rb_cObject);
     rb_define_singleton_method(rb_cFuzzyMatchExtension, "fuzzy_match",
         rb_fuzzy_match_extension_class_fuzzy_match, 2);
-    rb_define_singleton_method(rb_cFuzzyMatchExtension, "sort",
-        rb_fuzzy_match_extension_class_sort, 2);
+    rb_define_singleton_method(rb_cFuzzyMatchExtension, "sort_n",
+        rb_fuzzy_match_extension_class_sort_n, 3);
 }

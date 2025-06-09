@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "lib/fuzzy_match/version"
+require_relative "lib/fts_fuzzy_match/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "fuzzy_match"
-  spec.version       = FuzzyMatch::VERSION
+  spec.name          = "fts_fuzzy_match"
+  spec.version       = FtsFuzzyMatch::VERSION
   spec.authors       = ["Dave Goddard"]
   spec.email         = ["dave@goddard.au"]
 
   spec.summary       = "Gem to use FTS for fuzzy matching."
   spec.description   = "Gem to use FTS for fuzzy matching."
-  spec.homepage      = "https://github.com/dgodd/fuzzy_match_gem"
+  spec.homepage      = "https://github.com/dgodd/fuzzy_match"
   spec.required_ruby_version = ">= 3.3.0"
   spec.license = "MIT"
 
@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.extensions    = ["ext/fuzzy_match/extconf.rb"]
+  spec.extensions    = ["ext/fts_fuzzy_match/extconf.rb"]
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"

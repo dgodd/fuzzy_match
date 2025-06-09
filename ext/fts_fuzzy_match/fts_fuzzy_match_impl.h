@@ -70,7 +70,7 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
     if (*pattern == '\0' || *str == '\0')
         return false;
 
-    int stringLength = strlen(str);
+    unsigned long stringLength = strlen(str);
 
     // Recursion params
     bool recursiveMatch = false;

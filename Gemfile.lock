@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fuzzy_match (0.1.0)
+    fts_fuzzy_match (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -57,7 +57,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  fuzzy_match!
+  fts_fuzzy_match!
   json
   minitest (~> 5.0)
   rake (~> 13.0)
@@ -67,4 +67,4 @@ DEPENDENCIES
   rubocop-rake
 
 BUNDLED WITH
-   2.6.8
+   2.6.9

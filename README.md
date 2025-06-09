@@ -1,4 +1,4 @@
-# FuzzyMatch
+# FtsFuzzyMatch
 
 This will return a match score from a pattern and string. These scores are only
 useful for sorting against each other.

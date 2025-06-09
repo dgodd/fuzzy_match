@@ -1,12 +1,12 @@
-#include "fuzzy_match.h"
-#define FTS_FUZZY_MATCH_IMPLEMENTATION
 #include "fts_fuzzy_match.h"
+#define FTS_FUZZY_MATCH_IMPLEMENTATION
+#include "fts_fuzzy_match_impl.h"
 
-VALUE rb_mFuzzyMatch;
-VALUE rb_cFuzzyMatchExtension;
+VALUE rb_mFtsFuzzyMatch;
+VALUE rb_cFtsFuzzyMatchExtension;
 
 static VALUE
-rb_fuzzy_match_extension_class_fuzzy_match(VALUE self, VALUE pattern, VALUE str)
+rb_fts_fuzzy_match_extension_class_fuzzy_match(VALUE self, VALUE pattern, VALUE str)
 {
   char* patternPtr;
   patternPtr = StringValueCStr(pattern);
@@ -43,7 +43,7 @@ int comp(const void *a, const void *b) {
 }
 
 static VALUE
-rb_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strings, VALUE n)
+rb_fts_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strings, VALUE n)
 {
   char* patternPtr;
   patternPtr = StringValueCStr(pattern);
@@ -59,7 +59,7 @@ rb_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strings, 
 
   qsort(scores, stringsLen, sizeof(struct StringScore), comp);
 
-  int n2 = NUM2INT(n);
+  long n2 = NUM2INT(n);
   if (n2 > stringsLen) n2 = stringsLen;
 
   VALUE result = rb_ary_new_capa(n2);
@@ -71,12 +71,12 @@ rb_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strings, 
 }
 
 void
-Init_fuzzy_match(void)
+Init_fts_fuzzy_match(void)
 {
-    rb_mFuzzyMatch = rb_define_module("FuzzyMatch");
-    rb_cFuzzyMatchExtension = rb_define_class_under(rb_mFuzzyMatch, "Extension", rb_cObject);
-    rb_define_singleton_method(rb_cFuzzyMatchExtension, "fuzzy_match",
-        rb_fuzzy_match_extension_class_fuzzy_match, 2);
-    rb_define_singleton_method(rb_cFuzzyMatchExtension, "sort_n",
-        rb_fuzzy_match_extension_class_sort_n, 3);
+    rb_mFtsFuzzyMatch = rb_define_module("FtsFuzzyMatch");
+    rb_cFtsFuzzyMatchExtension = rb_define_class_under(rb_mFtsFuzzyMatch, "Extension", rb_cObject);
+    rb_define_singleton_method(rb_cFtsFuzzyMatchExtension, "fuzzy_match",
+        rb_fts_fuzzy_match_extension_class_fuzzy_match, 2);
+    rb_define_singleton_method(rb_cFtsFuzzyMatchExtension, "sort_n",
+        rb_fts_fuzzy_match_extension_class_sort_n, 3);
 }

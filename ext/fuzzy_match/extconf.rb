@@ -1,3 +1,5 @@
-require "mkmf"
+# frozen_string_literal: true
 
-create_makefile("fuzzy_match/fuzzy_match")
+require 'mkmf'
+
+create_makefile('fuzzy_match/fuzzy_match')

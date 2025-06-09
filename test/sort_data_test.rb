@@ -2,6 +2,7 @@
 
 require 'test_helper'
 require 'json'
+require 'benchmark'
 
 class SortDataTest < Minitest::Spec
   describe 'brands_1' do
@@ -10,6 +11,15 @@ class SortDataTest < Minitest::Spec
       result = ::FuzzyMatch.sort('sol', brands).take(10)
 
       assert_equal(result, ["FaSoLa", "SoL Cups", "The School Of Life", "Silence of the Lambs", "Small Fibre Optic Lamp", "Sox & Lok", "EcoSouLife", "Santa Fe Ole", "Somatik Labs", "Soft Landing"])
+    end
+
+    it 'benchmark' do
+      brands = JSON.parse(File.read(File.join(__dir__, 'data', 'brands_1.json')))
+
+      Benchmark.bm do |x|
+        x.report("ruby") { ::FuzzyMatch.sort('sol', brands).take(10) }
+        x.report("extension") { ::FuzzyMatch::Extension.sort('sol', brands).take(10) }
+      end
     end
   end
 

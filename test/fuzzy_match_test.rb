@@ -21,6 +21,12 @@ class FuzzyMatchTest < Minitest::Spec
         refute(result)
       end
     end
+
+    it ".sort" do
+      result = ::FuzzyMatch::Extension.sort("got", [ "getty over throne", "gameofthrones", "game of thrones", "some other words" ])
+
+      assert_equal([ "game of thrones", "getty over throne", "gameofthrones", "some other words" ], result)
+    end
   end
 
   describe "FuzzyMatch" do

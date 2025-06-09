@@ -7,7 +7,7 @@ class FuzzyMatchTest < Minitest::Spec
     it "returns a score" do
       result = ::FuzzyMatch::Extension.fuzzy_match("got", "game of thrones")
 
-      assert_equal(163, result)
+      assert_equal(148, result)
     end
 
     it "returns false when no match is found" do

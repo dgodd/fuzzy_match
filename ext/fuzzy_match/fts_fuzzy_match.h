@@ -70,6 +70,8 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
     if (*pattern == '\0' || *str == '\0')
         return false;
 
+    int stringLength = strlen(str);
+
     // Recursion params
     bool recursiveMatch = false;
     uint8_t bestRecursiveMatches[256];
@@ -117,14 +119,15 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
 
     // Calculate score
     if (matched) {
-        const int sequential_bonus = 15;            // bonus for adjacent matches
+        const int sequential_bonus = 20;            // bonus for adjacent matches (DEFAULT: 15)
         const int separator_bonus = 30;             // bonus if match occurs after a separator
-        const int camel_bonus = 30;                 // bonus if match is uppercase and prev is lower
+        const int camel_bonus = 0;                  // bonus if match is uppercase and prev is lower (DEFAULT: 30)
         const int first_letter_bonus = 15;          // bonus if the first letter is matched
 
         const int leading_letter_penalty = -5;      // penalty applied for every letter in str before the first match
         const int max_leading_letter_penalty = -15; // maximum penalty for leading letters
         const int unmatched_letter_penalty = -1;    // penalty for every letter that doesn't matter
+        const int string_length_penalty = -1;       // (DEFAULT: 0)
 
         // Iterate str to end
         while (*str != '\0')
@@ -132,6 +135,9 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
 
         // Initialize score
         *outScore = 100;
+
+        // Apply length penalty
+        *outScore += stringLength * string_length_penalty;
 
         // Apply leading letter penalty
         int penalty = leading_letter_penalty * matches[0];

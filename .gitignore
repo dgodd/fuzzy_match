@@ -12,3 +12,4 @@
 *.a
 mkmf.log
 /fuzzy_match-*.gem
+/fts_fuzzy_match-*.gem

@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = "Gem to use FTS for fuzzy matching."
   spec.description   = "Gem to use FTS for fuzzy matching."
   spec.homepage      = "https://github.com/dgodd/fuzzy_match_gem"
-  spec.required_ruby_version = ">= 3.4.0"
+  spec.required_ruby_version = ">= 3.3.0"
   spec.license = "MIT"
 
   # Specify which files should be added to the gem when it is released.

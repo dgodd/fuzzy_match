@@ -58,6 +58,7 @@ PLATFORMS
 
 DEPENDENCIES
   fuzzy_match!
+  json
   minitest (~> 5.0)
   rake (~> 13.0)
   rake-compiler

@@ -10,3 +10,7 @@ gem "rake", "~> 13.0"
 gem "rake-compiler"
 
 gem "minitest", "~> 5.0"
+
+gem 'rubocop-minitest'
+gem 'rubocop-performance'
+gem 'rubocop-rake'

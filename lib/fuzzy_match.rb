@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'fuzzy_match/version'
-require_relative 'fuzzy_match/fuzzy_match'
+require_relative "fuzzy_match/version"
+require_relative "fuzzy_match/fuzzy_match"
 
 # FTS Fuzzy Match module. Can score or sort
 module FuzzyMatch

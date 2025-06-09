@@ -15,6 +15,15 @@ class FtsFuzzyMatchTest < Minitest::Spec
 
       refute(result)
     end
+
+    # it "different number for each value" do
+    #   brands = JSON.parse(File.read(File.join(__dir__, 'data', 'brands_1.json')))
+    #   brands = brands.sort_by { |string| -1 * (::FtsFuzzyMatch::Extension.fuzzy_match('sol', string) || -200) }.take(20)
+    #   brands.each do |brand|
+    #     result = ::FtsFuzzyMatch::Extension.fuzzy_match("sol", brand)
+    #     puts "BRAND: #{brand} : #{result}"
+    #   end
+    # end
   end
 
   it ".sort" do

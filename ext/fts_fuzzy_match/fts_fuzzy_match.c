@@ -1,4 +1,5 @@
 #include "fts_fuzzy_match.h"
+#include <_strings.h>
 #define FTS_FUZZY_MATCH_IMPLEMENTATION
 #include "fts_fuzzy_match_impl.h"
 
@@ -39,7 +40,12 @@ int comp(const void *a, const void *b) {
   } else if (!aa->matched && bb->matched) {
     return 1;
   }
-  return bb->score - aa->score;
+  if (aa->score != bb->score) {
+    return bb->score - aa->score;
+  } else {
+      // Given the score is the same, sort alphabetically to keep the order consistent
+      return strcasecmp(StringValueCStr(aa->str), StringValueCStr(bb->str));
+  }
 }
 
 static VALUE

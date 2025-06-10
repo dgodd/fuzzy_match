@@ -1,5 +1,4 @@
 #include "fts_fuzzy_match.h"
-#include <_strings.h>
 #define FTS_FUZZY_MATCH_IMPLEMENTATION
 #include "fts_fuzzy_match_impl.h"
 

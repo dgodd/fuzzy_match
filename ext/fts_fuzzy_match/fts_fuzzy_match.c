@@ -24,7 +24,8 @@ rb_fts_fuzzy_match_extension_class_fuzzy_match(VALUE self, VALUE pattern, VALUE 
 }
 
 struct StringScore {
-  VALUE str;
+  VALUE rbStr;
+  char *cStr;
   bool matched;
   int score;
 };
@@ -43,7 +44,7 @@ int comp(const void *a, const void *b) {
     return bb->score - aa->score;
   } else {
       // Given the score is the same, sort alphabetically to keep the order consistent
-      return strcasecmp(StringValueCStr(aa->str), StringValueCStr(bb->str));
+      return strcasecmp(aa->cStr, bb->cStr);
   }
 }
 
@@ -56,10 +57,10 @@ rb_fts_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strin
 
   struct StringScore *scores = (struct StringScore *)malloc(stringsLen * sizeof(struct StringScore));
   for (long i=0; i<stringsLen; i++) {
-    const VALUE str = RARRAY_AREF(strings, i);
-    const char* strPtr = StringValueCStr(str);
-    scores[i].str = str;
-    scores[i].matched = fts_fuzzy_match_simple(patternPtr, strPtr, &scores[i].score);
+    volatile VALUE str = RARRAY_AREF(strings, i);
+    scores[i].rbStr = str;
+    scores[i].cStr = StringValueCStr(str);
+    scores[i].matched = fts_fuzzy_match_simple(patternPtr, scores[i].cStr, &scores[i].score);
   }
 
   qsort(scores, stringsLen, sizeof(struct StringScore), comp);
@@ -69,7 +70,7 @@ rb_fts_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strin
 
   VALUE result = rb_ary_new_capa(n2);
   for (long i=0; i<n2; i++) {
-    rb_ary_push(result, scores[i].str);
+    rb_ary_push(result, scores[i].rbStr);
   }
 
   return result;

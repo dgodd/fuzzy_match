@@ -1,6 +1,6 @@
-#include "fts_fuzzy_match.h"
+#include "ruby.h"
 #define FTS_FUZZY_MATCH_IMPLEMENTATION
-#include "fts_fuzzy_match_impl.h"
+#include "fts_fuzzy_match.h"
 
 VALUE rb_mFtsFuzzyMatch;
 VALUE rb_cFtsFuzzyMatchExtension;

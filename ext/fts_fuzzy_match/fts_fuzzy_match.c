@@ -13,8 +13,9 @@ rb_fts_fuzzy_match_extension_class_fuzzy_match(VALUE self, VALUE pattern, VALUE 
   char* strPtr;
   strPtr = StringValueCStr(str);
 
+  struct FtsConfig config = fts_default_config();
   int outScore;
-  int matched = fts_fuzzy_match_simple(patternPtr, strPtr, &outScore);
+  int matched = fts_fuzzy_match_simple(patternPtr, strPtr, &config, &outScore);
   // return rb_sprintf("Matched: %d\nScore: %d\n", matched, outScore);
   if (matched) {
       return INT2FIX(outScore);
@@ -55,12 +56,14 @@ rb_fts_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strin
   patternPtr = StringValueCStr(pattern);
   long stringsLen = RARRAY_LEN(strings);
 
+  struct FtsConfig config = fts_default_config();
+
   struct StringScore *scores = (struct StringScore *)malloc(stringsLen * sizeof(struct StringScore));
   for (long i=0; i<stringsLen; i++) {
     volatile VALUE str = RARRAY_AREF(strings, i);
     scores[i].rbStr = str;
     scores[i].cStr = StringValueCStr(str);
-    scores[i].matched = fts_fuzzy_match_simple(patternPtr, scores[i].cStr, &scores[i].score);
+    scores[i].matched = fts_fuzzy_match_simple(patternPtr, scores[i].cStr, &config, &scores[i].score);
   }
 
   qsort(scores, stringsLen, sizeof(struct StringScore), comp);

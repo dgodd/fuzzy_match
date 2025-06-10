@@ -34,30 +34,56 @@
 #include <ctype.h> // tolower, toupper
 
 // Public interface
-static bool fts_fuzzy_match_simple(char const * pattern, char const * str, int * outScore);
-static bool fts_fuzzy_match(char const * pattern, char const * str, int * outScore, uint8_t * matches, int maxMatches);
+struct FtsConfig {
+    int sequential_bonus;            // bonus for adjacent matches (DEFAULT: 15)
+    int separator_bonus;             // bonus if match occurs after a separator
+    int camel_bonus;                  // bonus if match is uppercase and prev is lower (DEFAULT: 30)
+    int first_letter_bonus;          // bonus if the first letter is matched
+
+    int leading_letter_penalty;      // penalty applied for every letter in str before the first match
+    int max_leading_letter_penalty; // maximum penalty for leading letters
+    int unmatched_letter_penalty;    // penalty for every letter that doesn't matter
+    int string_length_penalty;       // (DEFAULT: 0)
+};
+
+struct FtsConfig fts_default_config() {
+    struct FtsConfig config = {
+        .sequential_bonus = 20,
+        .separator_bonus = 30,
+        .camel_bonus = 0,
+        .first_letter_bonus = 15,
+        .leading_letter_penalty = -5,
+        .max_leading_letter_penalty = -15,
+        .unmatched_letter_penalty = -1,
+        .string_length_penalty = -1
+    };
+    return config;
+}
+
+static bool fts_fuzzy_match_simple(char const * pattern, char const * str, struct FtsConfig const * config, int * outScore);
+static bool fts_fuzzy_match(char const * pattern, char const * str, struct FtsConfig const * config, int * outScore, uint8_t * matches, int maxMatches);
 
 #ifdef FTS_FUZZY_MATCH_IMPLEMENTATION
 
 // Private interface
-static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, int * outScore,
+static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, struct FtsConfig const * config, int * outScore,
     const char * strBegin, uint8_t const * srcMatches, uint8_t * matches, int maxMatches,
     int nextMatch, int * recursionCount, int recursionLimit);
 
-static bool fts_fuzzy_match_simple(char const * pattern, char const * str, int * outScore) {
+static bool fts_fuzzy_match_simple(char const * pattern, char const * str, struct FtsConfig const * config, int * outScore) {
     uint8_t matches[256];
-    return fts_fuzzy_match(pattern, str, outScore, matches, sizeof(matches));
+    return fts_fuzzy_match(pattern, str, config, outScore, matches, sizeof(matches));
 }
 
-static bool fts_fuzzy_match(char const * pattern, char const * str, int * outScore, uint8_t * matches, int maxMatches) {
+static bool fts_fuzzy_match(char const * pattern, char const * str, struct FtsConfig const * config, int * outScore, uint8_t * matches, int maxMatches) {
     int recursionCount = 0;
     int recursionLimit = 10;
 
-    return fts_fuzzy_match_recursive(pattern, str, outScore, str, NULL, matches, maxMatches, 0, &recursionCount, recursionLimit);
+    return fts_fuzzy_match_recursive(pattern, str, config, outScore, str, NULL, matches, maxMatches, 0, &recursionCount, recursionLimit);
 }
 
 // Private implementation
-static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, int * outScore,
+static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, struct FtsConfig const * config, int * outScore,
     const char * strBegin, uint8_t const * srcMatches, uint8_t * matches, int maxMatches,
     int nextMatch, int * recursionCount, int recursionLimit)
 {
@@ -97,7 +123,7 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
             // Recursive call that "skips" this match
             uint8_t recursiveMatches[256];
             int recursiveScore;
-            if (fts_fuzzy_match_recursive(pattern, str + 1, &recursiveScore, strBegin, matches, recursiveMatches, sizeof(recursiveMatches), nextMatch, recursionCount, recursionLimit)) {
+            if (fts_fuzzy_match_recursive(pattern, str + 1, config, &recursiveScore, strBegin, matches, recursiveMatches, sizeof(recursiveMatches), nextMatch, recursionCount, recursionLimit)) {
 
                 // Pick best recursive score
                 if (!recursiveMatch || recursiveScore > bestRecursiveScore) {
@@ -119,16 +145,6 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
 
     // Calculate score
     if (matched) {
-        const int sequential_bonus = 20;            // bonus for adjacent matches (DEFAULT: 15)
-        const int separator_bonus = 30;             // bonus if match occurs after a separator
-        const int camel_bonus = 0;                  // bonus if match is uppercase and prev is lower (DEFAULT: 30)
-        const int first_letter_bonus = 15;          // bonus if the first letter is matched
-
-        const int leading_letter_penalty = -5;      // penalty applied for every letter in str before the first match
-        const int max_leading_letter_penalty = -15; // maximum penalty for leading letters
-        const int unmatched_letter_penalty = -1;    // penalty for every letter that doesn't matter
-        const int string_length_penalty = -1;       // (DEFAULT: 0)
-
         // Iterate str to end
         while (*str != '\0')
             ++str;
@@ -137,17 +153,17 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
         *outScore = 100;
 
         // Apply length penalty
-        *outScore += stringLength * string_length_penalty;
+        *outScore += stringLength * config->string_length_penalty;
 
         // Apply leading letter penalty
-        int penalty = leading_letter_penalty * matches[0];
-        if (penalty < max_leading_letter_penalty)
-            penalty = max_leading_letter_penalty;
+        int penalty = config->leading_letter_penalty * matches[0];
+        if (penalty < config->max_leading_letter_penalty)
+            penalty = config->max_leading_letter_penalty;
         *outScore += penalty;
 
         // Apply unmatched penalty
         int unmatched = (int)(str - strBegin) - nextMatch;
-        *outScore += unmatched_letter_penalty * unmatched;
+        *outScore += config->unmatched_letter_penalty * unmatched;
 
         // Apply ordering bonuses
         for (int i = 0; i < nextMatch; ++i) {
@@ -158,7 +174,7 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
 
                 // Sequential
                 if (currIdx == (prevIdx + 1))
-                    *outScore += sequential_bonus;
+                    *outScore += config->sequential_bonus;
             }
 
             // Check for bonuses based on neighbor character value
@@ -167,16 +183,16 @@ static bool fts_fuzzy_match_recursive(const char * pattern, const char * str, in
                 char neighbor = strBegin[currIdx - 1];
                 char curr = strBegin[currIdx];
                 if (islower(neighbor) && isupper(curr))
-                    *outScore += camel_bonus;
+                    *outScore += config->camel_bonus;
 
                 // Separator
                 bool neighborSeparator = neighbor == '_' || neighbor == ' ';
                 if (neighborSeparator)
-                    *outScore += separator_bonus;
+                    *outScore += config->separator_bonus;
             }
             else {
                 // First letter
-                *outScore += first_letter_bonus;
+                *outScore += config->first_letter_bonus;
             }
         }
     }

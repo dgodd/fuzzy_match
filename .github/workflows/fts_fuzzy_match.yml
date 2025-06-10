@@ -23,10 +23,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # ruby: ["3.3", "3.4", "head"]
-        # runs-on: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        ruby: ["3.3", "3.4"]
-        runs-on: ["ubuntu-latest"]
+        ruby: ["3.3", "3.4", "head"]
+        runs-on: ["ubuntu-latest", "macos-latest", "windows-latest"]
     runs-on: ${{matrix.runs-on}}
     steps:
       - uses: actions/checkout@v4

@@ -5,7 +5,7 @@ require 'json'
 require 'benchmark'
 
 class SortDataTest < Minitest::Spec
-  subject { ::FtsFuzzyMatch.new }
+  subject { ::FtsFuzzyMatch.new(sequential_bonus: 20, camel_bonus: 0, string_length_penalty: -1) }
 
   describe 'brands_1' do
     it '.sort' do

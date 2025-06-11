@@ -6,7 +6,9 @@ class FtsFuzzyMatchTest < Minitest::Spec
   describe ".fuzzy_match" do
     it "returns a score" do
       result = ::FtsFuzzyMatch::Extension.new.fuzzy_match("got", "game of thrones")
+      assert_equal(163, result)
 
+      result = ::FtsFuzzyMatch::Extension.new(sequential_bonus: 20, camel_bonus: 0, string_length_penalty: -1).fuzzy_match("got", "game of thrones")
       assert_equal(148, result)
     end
 
@@ -27,14 +29,14 @@ class FtsFuzzyMatchTest < Minitest::Spec
   end
 
   it ".sort" do
-    result = ::FtsFuzzyMatch.new.sort("got", [ "getty over throne", "gameofthrones", "game of thrones", "some other words" ])
-
+    subject = ::FtsFuzzyMatch.new(sequential_bonus: 20, camel_bonus: 0, string_length_penalty: -1)
+    result = subject.sort("got", [ "getty over throne", "gameofthrones", "game of thrones", "some other words" ])
     assert_equal([ "game of thrones", "getty over throne", "gameofthrones", "some other words" ], result)
   end
 
   it ".sort_n" do
-    result = ::FtsFuzzyMatch.new.sort_n("got", [ "getty over throne", "gameofthrones", "game of thrones", "some other words" ], 2)
-
+    subject = ::FtsFuzzyMatch.new(sequential_bonus: 20, camel_bonus: 0, string_length_penalty: -1)
+    result = subject.sort_n("got", [ "getty over throne", "gameofthrones", "game of thrones", "some other words" ], 2)
     assert_equal([ "game of thrones", "getty over throne"], result)
   end
 end

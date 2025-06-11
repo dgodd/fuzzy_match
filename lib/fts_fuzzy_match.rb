@@ -7,8 +7,8 @@ require_relative "fts_fuzzy_match/fts_fuzzy_match"
 class FtsFuzzyMatch
   class Error < StandardError; end
 
-  def initialize
-    @extension = ::FtsFuzzyMatch::Extension.new
+  def initialize(...)
+    @extension = ::FtsFuzzyMatch::Extension.new(...)
   end
 
   def sort_in_ruby(pattern, strings)
@@ -25,10 +25,15 @@ class FtsFuzzyMatch
   end
 
   class Extension
-    def initialize
-      @sequential_bonus = 20
-      @camel_bonus = 0
-      @string_length_penalty = -1
+    def initialize(**args)
+      @sequential_bonus = args[:sequential_bonus]
+      @separator_bonus = args[:separator_bonus]
+      @camel_bonus = args[:camel_bonus]
+      @first_letter_bonus = args[:first_letter_bonus]
+      @leading_letter_penalty = args[:leading_letter_penalty]
+      @max_leading_letter_penalty = args[:max_leading_letter_penalty]
+      @unmatched_letter_penalty = args[:unmatched_letter_penalty]
+      @string_length_penalty = args[:string_length_penalty]
     end
   end
 end

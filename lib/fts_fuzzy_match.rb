@@ -11,9 +11,13 @@ class FtsFuzzyMatch
     @extension = ::FtsFuzzyMatch::Extension.new(...)
   end
 
+  def fuzzy_match(pattern, string)
+    @extension.fuzzy_match(pattern, string)
+  end
+
   def sort_in_ruby(pattern, strings)
     # fuzzy_match is -50..50 so -200 is the lowest possible score
-    strings.sort_by { |string| -1 * (@extension.fuzzy_match(pattern, string) || -200) }
+    strings.sort_by { |string| -1 * (fuzzy_match(pattern, string) || -200) }
   end
 
   def sort_n(pattern, strings, n)

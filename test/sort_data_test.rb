@@ -5,10 +5,12 @@ require 'json'
 require 'benchmark'
 
 class SortDataTest < Minitest::Spec
+  subject { ::FtsFuzzyMatch.new }
+
   describe 'brands_1' do
     it '.sort' do
       brands = JSON.parse(File.read(File.join(__dir__, 'data', 'brands_1.json')))
-      result = ::FtsFuzzyMatch.sort('sol', brands).take(10)
+      result = subject.sort('sol', brands).take(10)
 
       assert_equal(result, ["Sol", "The School Of Life", "Sola", "Sole", "Solo", "SOLT", "Solu", "Sox & Lok", "Solac", "Solal"])
     end
@@ -17,9 +19,9 @@ class SortDataTest < Minitest::Spec
     #   brands = JSON.parse(File.read(File.join(__dir__, 'data', 'brands_1.json')))
 
     #   Benchmark.bm do |x|
-    #     x.report("ruby") { ::FtsFuzzyMatch.sort_in_ruby('sol', brands).take(10) }
-    #     x.report("extension") { ::FtsFuzzyMatch.sort('sol', brands).take(10) }
-    #     x.report("sort_n") { ::FtsFuzzyMatch.sort_n('sol', brands, 10) }
+    #     x.report("ruby") { subject.sort_in_ruby('sol', brands).take(10) }
+    #     x.report("extension") { subject.sort('sol', brands).take(10) }
+    #     x.report("sort_n") { subject.sort_n('sol', brands, 10) }
     #   end
     # end
   end
@@ -27,7 +29,7 @@ class SortDataTest < Minitest::Spec
   describe 'brands_2' do
     it '.sort' do
       brands = JSON.parse(File.read(File.join(__dir__, 'data', 'brands_2.json')))
-      result = ::FtsFuzzyMatch.sort('sol', brands).take(10)
+      result = subject.sort('sol', brands).take(10)
 
       assert_equal(result, ["SOUND OF LIGHT", "THE SCHOOL OF LIFE", "S. OLIVER", "SOLAC", "Soleaf", "SOLERA", "Solgar", "Solidu", "SOLMAR", "SOLTER"])
     end
@@ -36,9 +38,9 @@ class SortDataTest < Minitest::Spec
     #   brands = JSON.parse(File.read(File.join(__dir__, 'data', 'brands_2.json')))
 
     #   Benchmark.bm do |x|
-    #     x.report("ruby") { ::FtsFuzzyMatch.sort_in_ruby('sol', brands).take(10) }
-    #     x.report("extension") { ::FtsFuzzyMatch.sort('sol', brands).take(10) }
-    #     x.report("sort_n") { ::FtsFuzzyMatch.sort_n('sol', brands, 10) }
+    #     x.report("ruby") { subject.sort_in_ruby('sol', brands).take(10) }
+    #     x.report("extension") { subject.sort('sol', brands).take(10) }
+    #     x.report("sort_n") { subject.sort_n('sol', brands, 10) }
     #   end
     # end
   end

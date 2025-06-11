@@ -2,8 +2,31 @@
 #define FTS_FUZZY_MATCH_IMPLEMENTATION
 #include "fts_fuzzy_match.h"
 
-VALUE rb_mFtsFuzzyMatch;
+VALUE rb_cFtsFuzzyMatch;
 VALUE rb_cFtsFuzzyMatchExtension;
+
+int get_num_from_self(VALUE self, char *name, int default_value) {
+  VALUE val = rb_iv_get(self, name);
+  switch TYPE(val) {
+      case 7: return NUM2INT(RARRAY_AREF(val, 0));
+      case 21: return NUM2INT(val);
+      default: return default_value;
+  }
+}
+
+struct FtsConfig fts_config(VALUE self) {
+    struct FtsConfig config = {
+        .sequential_bonus = get_num_from_self(self, (char*)"@sequential_bonus", 15),
+        .separator_bonus = get_num_from_self(self, (char*)"@separator_bonus", 30),
+        .camel_bonus = get_num_from_self(self, (char*)"@camel_bonus", 30),
+        .first_letter_bonus = get_num_from_self(self, (char*)"@first_letter_bonus", 15),
+        .leading_letter_penalty = get_num_from_self(self, (char*)"@leading_letter_penalty", -5),
+        .max_leading_letter_penalty = get_num_from_self(self, (char*)"@max_leading_letter_penalty", -15),
+        .unmatched_letter_penalty = get_num_from_self(self, (char*)"@unmatched_letter_penalty", -1),
+        .string_length_penalty = get_num_from_self(self, (char*)"@string_length_penalty", 0)
+    };
+    return config;
+}
 
 static VALUE
 rb_fts_fuzzy_match_extension_class_fuzzy_match(VALUE self, VALUE pattern, VALUE str)
@@ -13,7 +36,7 @@ rb_fts_fuzzy_match_extension_class_fuzzy_match(VALUE self, VALUE pattern, VALUE 
   char* strPtr;
   strPtr = StringValueCStr(str);
 
-  struct FtsConfig config = fts_default_config();
+  struct FtsConfig config = fts_config(self);
   int outScore;
   int matched = fts_fuzzy_match_simple(patternPtr, strPtr, &config, &outScore);
   // return rb_sprintf("Matched: %d\nScore: %d\n", matched, outScore);
@@ -56,7 +79,7 @@ rb_fts_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strin
   patternPtr = StringValueCStr(pattern);
   long stringsLen = RARRAY_LEN(strings);
 
-  struct FtsConfig config = fts_default_config();
+  struct FtsConfig config = fts_config(self);
 
   struct StringScore *scores = (struct StringScore *)malloc(stringsLen * sizeof(struct StringScore));
   for (long i=0; i<stringsLen; i++) {
@@ -82,10 +105,10 @@ rb_fts_fuzzy_match_extension_class_sort_n(VALUE self, VALUE pattern, VALUE strin
 void
 Init_fts_fuzzy_match(void)
 {
-    rb_mFtsFuzzyMatch = rb_define_module("FtsFuzzyMatch");
-    rb_cFtsFuzzyMatchExtension = rb_define_class_under(rb_mFtsFuzzyMatch, "Extension", rb_cObject);
-    rb_define_singleton_method(rb_cFtsFuzzyMatchExtension, "fuzzy_match",
+    rb_cFtsFuzzyMatch = rb_define_class("FtsFuzzyMatch", rb_cObject);
+    rb_cFtsFuzzyMatchExtension = rb_define_class_under(rb_cFtsFuzzyMatch, "Extension", rb_cObject);
+    rb_define_method(rb_cFtsFuzzyMatchExtension, "fuzzy_match",
         rb_fts_fuzzy_match_extension_class_fuzzy_match, 2);
-    rb_define_singleton_method(rb_cFtsFuzzyMatchExtension, "sort_n",
+    rb_define_method(rb_cFtsFuzzyMatchExtension, "sort_n",
         rb_fts_fuzzy_match_extension_class_sort_n, 3);
 }

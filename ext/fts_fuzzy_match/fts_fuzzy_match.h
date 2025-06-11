@@ -46,19 +46,6 @@ struct FtsConfig {
     int string_length_penalty;       // (DEFAULT: 0)
 };
 
-struct FtsConfig fts_default_config() {
-    struct FtsConfig config = {
-        .sequential_bonus = 20,
-        .separator_bonus = 30,
-        .camel_bonus = 0,
-        .first_letter_bonus = 15,
-        .leading_letter_penalty = -5,
-        .max_leading_letter_penalty = -15,
-        .unmatched_letter_penalty = -1,
-        .string_length_penalty = -1
-    };
-    return config;
-}
 
 static bool fts_fuzzy_match_simple(char const * pattern, char const * str, struct FtsConfig const * config, int * outScore);
 static bool fts_fuzzy_match(char const * pattern, char const * str, struct FtsConfig const * config, int * outScore, uint8_t * matches, int maxMatches);
